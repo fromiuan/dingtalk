@@ -1,7 +1,10 @@
 package dingtalk
 
-var (
-	root = "https://oapi.dingtalk.com"
+const ROOTURL = "https://oapi.dingtalk.com"
 
-	getuserinfo_bycode = root + "/sns/getuserinfo_bycode"
+var (
+	getuserinfo_bycode = ROOTURL + "/sns/getuserinfo_bycode"
+	getuserinfo        = ROOTURL + "/user/getuserinfo"
+	gettoken           = ROOTURL + "/gettoken"
+	sso_gettoken       = ROOTURL + "/sso/gettoken"
 )
