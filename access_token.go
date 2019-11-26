@@ -4,14 +4,13 @@ import (
 	"encoding/json"
 	"errors"
 	"fmt"
-	"sync"
 	"time"
 
 	"github.com/fromiuan/dingtalk/lib"
 )
 
 var (
-	defaultExpires = 7200
+	defaultExpires = 7000
 )
 
 //ResAccessToken struct
@@ -26,7 +25,7 @@ func (c *Client) GetAccessToken() (accessToken string, err error) {
 	c.Tlock.Lock()
 	defer c.Tlock.Unlock()
 
-	accessTokenCacheKey := fmt.Sprintf("access_token_%s", c.AppID)
+	accessTokenCacheKey := fmt.Sprintf("access_token_%s", c.AppKey)
 	val := c.Cache.Get(accessTokenCacheKey)
 	if val != nil {
 		accessToken = val.(string)
@@ -45,7 +44,7 @@ func (c *Client) GetAccessToken() (accessToken string, err error) {
 
 //GetAccessTokenFromServer 强制从服务器获取token
 func (c *Client) GetAccessTokenFromServer() (resAccessToken ResAccessToken, err error) {
-	url := fmt.Sprintf("%s?appkey=%s&appsecret=%s", gettoken, c.AppKey, c.AppSecret)
+	url := fmt.Sprintf("%s?appkey=%s&appsecret=%s", GetToken, c.AppKey, c.AppSecret)
 	var body []byte
 	body, err = lib.Get(url).AsBytes()
 	if err != nil {
@@ -56,10 +55,11 @@ func (c *Client) GetAccessTokenFromServer() (resAccessToken ResAccessToken, err 
 		return
 	}
 	if resAccessToken.ErrCode != 0 {
-		return errors.New(resAccessToken.ErrMsg)
+		err = errors.New(resAccessToken.ErrMsg)
+		return
 	}
 
-	accessTokenCacheKey := fmt.Sprintf("access_token_%s", c.AppID)
+	accessTokenCacheKey := fmt.Sprintf("access_token_%s", c.AppKey)
 	err = c.Cache.Set(accessTokenCacheKey, resAccessToken.AccessToken, time.Duration(defaultExpires)*time.Second)
 	return
 }

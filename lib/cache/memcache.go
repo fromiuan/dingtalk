@@ -17,7 +17,6 @@ type MemOpts struct {
 	Conn string
 }
 
-
 func NewMemCache() Cache {
 	return &MemCache{}
 }
@@ -72,8 +71,10 @@ func (rc *MemCache) IsExist(key string) bool {
 
 func (rc *MemCache) Init(cfg interface{}) error {
 	var opts *MemOpts
-	if opts, ok := cfg.(*MemOpts); !ok {
+	if val, ok := cfg.(*MemOpts); !ok {
 		return errors.New("interface not type MemOpts")
+	} else {
+		opts = val
 	}
 	if opts.Conn == "" {
 		return errors.New("config has no conn key")
@@ -93,5 +94,5 @@ func (rc *MemCache) connectInit() error {
 }
 
 func init() {
-	cache.Register("memcache", NewMemCache)
+	Register("memcache", NewMemCache())
 }

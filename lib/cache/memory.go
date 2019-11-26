@@ -79,8 +79,10 @@ func (bc *MemoryCache) IsExist(name string) bool {
 
 func (bc *MemoryCache) Init(cfg interface{}) error {
 	var opts *MemoryOpts
-	if opts, ok := cfg.(*MemoryOpts); !ok {
+	if val, ok := cfg.(*MemoryOpts); !ok {
 		return errors.New("interface not type MemoryOpts")
+	} else {
+		opts = val
 	}
 
 	if opts.Interval == 0 {
@@ -140,5 +142,5 @@ func (mi *MemoryItem) isExpire() bool {
 }
 
 func init() {
-	Register("memory", NewMemoryCache)
+	Register("memory", NewMemoryCache())
 }

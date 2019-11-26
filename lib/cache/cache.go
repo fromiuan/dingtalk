@@ -14,11 +14,9 @@ type Cache interface {
 	Init(cfg interface{}) error
 }
 
-type Instance func() Cache
+var adapters = make(map[string]Cache)
 
-var adapters = make(map[string]Instance)
-
-func Register(name string, adapter Instance) {
+func Register(name string, adapter Cache) {
 	if adapter == nil {
 		panic("cache: Register adapter is nil")
 	}
@@ -28,13 +26,12 @@ func Register(name string, adapter Instance) {
 	adapters[name] = adapter
 }
 
-func NewCache(adapterName, config interface{}) (adapter Cache, err error) {
-	instanceFunc, ok := adapters[adapterName]
+func NewCache(adapterName string, config interface{}) (adapter Cache, err error) {
+	adapter, ok := adapters[adapterName]
 	if !ok {
 		err = fmt.Errorf("cache: unknown adapter name %q (forgot to import?)", adapterName)
 		return
 	}
-	adapter = instanceFunc()
 	err = adapter.Init(config)
 	if err != nil {
 		adapter = nil

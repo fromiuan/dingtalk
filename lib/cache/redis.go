@@ -72,8 +72,10 @@ func (r *Redis) IsExist(key string) bool {
 
 func (r *Redis) Init(cfg interface{}) error {
 	var opts *RedisOpts
-	if opts, ok := cfg.(*RedisOpts); !ok {
+	if val, ok := cfg.(*RedisOpts); !ok {
 		return errors.New("interface not type RedisOpts")
+	} else {
+		opts = val
 	}
 	pool := &redis.Pool{
 		MaxActive:   opts.MaxActive,
@@ -98,5 +100,5 @@ func (r *Redis) Init(cfg interface{}) error {
 }
 
 func init() {
-	Register("redis", NewRedisCache)
+	Register("redis", NewRedisCache())
 }

@@ -17,10 +17,10 @@ var defaultUserAgent = "httplib.go"
 
 var debugprint = false
 
-type Client struct {
-	conn    *httputil.ClientConn
-	lastURL *url.URL
-}
+// type Client struct {
+// 	conn    *httputil.ClientConn
+// 	lastURL *url.URL
+// }
 
 type nopCloser struct {
 	io.Reader
