@@ -22,8 +22,7 @@ type RedisOpts struct {
 }
 
 func NewRedisCache() Cache {
-	cache := MemoryCache{items: make(map[string]interface{})}
-	return &cache
+	return &Redis{}
 }
 
 func (r *Redis) SetConn(conn *redis.Pool) {
@@ -71,7 +70,7 @@ func (r *Redis) IsExist(key string) bool {
 	return false
 }
 
-func (r *Redis) Init(cfg interface{}) *Redis {
+func (r *Redis) Init(cfg interface{}) error {
 	var opts *RedisOpts
 	if opts, ok := cfg.(*RedisOpts); !ok {
 		return errors.New("interface not type RedisOpts")
@@ -94,7 +93,8 @@ func (r *Redis) Init(cfg interface{}) *Redis {
 			return err
 		},
 	}
-	return &Redis{pool}
+	r.conn = pool
+	return nil
 }
 
 func init() {

@@ -23,12 +23,12 @@ type MemoryItem struct {
 type MemoryCache struct {
 	sync.RWMutex
 	dur   time.Duration
-	items map[string]interface{}
+	items map[string]*MemoryItem
 	Every int
 }
 
 func NewMemoryCache() Cache {
-	cache := MemoryCache{items: make(map[string]interface{})}
+	cache := MemoryCache{items: make(map[string]*MemoryItem)}
 	return &cache
 }
 
@@ -130,6 +130,13 @@ func (bc *MemoryCache) clearItems(keys []string) {
 	for _, key := range keys {
 		delete(bc.items, key)
 	}
+}
+
+func (mi *MemoryItem) isExpire() bool {
+	if mi.lifespan == 0 {
+		return false
+	}
+	return time.Now().Sub(mi.createdTime) > mi.lifespan
 }
 
 func init() {

@@ -1,7 +1,6 @@
 package cache
 
 import (
-	"encoding/json"
 	"errors"
 	"strings"
 	"time"
@@ -9,7 +8,7 @@ import (
 	"github.com/bradfitz/gomemcache/memcache"
 )
 
-type Cache struct {
+type MemCache struct {
 	conn     *memcache.Client
 	conninfo []string
 }
@@ -18,11 +17,12 @@ type MemOpts struct {
 	Conn string
 }
 
-func NewMemCache() cache.Cache {
-	return &Cache{}
+
+func NewMemCache() Cache {
+	return &MemCache{}
 }
 
-func (rc *Cache) Get(key string) interface{} {
+func (rc *MemCache) Get(key string) interface{} {
 	if rc.conn == nil {
 		if err := rc.connectInit(); err != nil {
 			return err
@@ -34,7 +34,7 @@ func (rc *Cache) Get(key string) interface{} {
 	return nil
 }
 
-func (rc *Cache) Set(key string, val interface{}, timeout time.Duration) error {
+func (rc *MemCache) Set(key string, val interface{}, timeout time.Duration) error {
 	if rc.conn == nil {
 		if err := rc.connectInit(); err != nil {
 			return err
@@ -51,7 +51,7 @@ func (rc *Cache) Set(key string, val interface{}, timeout time.Duration) error {
 	return rc.conn.Set(&item)
 }
 
-func (rc *Cache) Delete(key string) error {
+func (rc *MemCache) Delete(key string) error {
 	if rc.conn == nil {
 		if err := rc.connectInit(); err != nil {
 			return err
@@ -60,7 +60,7 @@ func (rc *Cache) Delete(key string) error {
 	return rc.conn.Delete(key)
 }
 
-func (rc *Cache) IsExist(key string) bool {
+func (rc *MemCache) IsExist(key string) bool {
 	if rc.conn == nil {
 		if err := rc.connectInit(); err != nil {
 			return false
@@ -70,7 +70,7 @@ func (rc *Cache) IsExist(key string) bool {
 	return !(err != nil)
 }
 
-func (rc *Cache) Init(cfg *MemOpts) error {
+func (rc *MemCache) Init(cfg interface{}) error {
 	var opts *MemOpts
 	if opts, ok := cfg.(*MemOpts); !ok {
 		return errors.New("interface not type MemOpts")
@@ -87,7 +87,7 @@ func (rc *Cache) Init(cfg *MemOpts) error {
 	return nil
 }
 
-func (rc *Cache) connectInit() error {
+func (rc *MemCache) connectInit() error {
 	rc.conn = memcache.New(rc.conninfo...)
 	return nil
 }

@@ -1,6 +1,9 @@
 package cache
 
-import "time"
+import (
+	"fmt"
+	"time"
+)
 
 //Cache interface
 type Cache interface {
@@ -8,7 +11,7 @@ type Cache interface {
 	Set(key string, val interface{}, timeout time.Duration) error
 	Delete(key string) error
 	IsExist(key string) bool
-	Init() error
+	Init(cfg interface{}) error
 }
 
 type Instance func() Cache
