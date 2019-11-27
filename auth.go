@@ -10,6 +10,11 @@ import (
 	"github.com/fromiuan/dingtalk/lib"
 )
 
+type AuthClient struct {
+	AppId     string
+	AppSecret string
+}
+
 // 扫描登陆第三方、钉钉内部登录第三方、密码登录第三方
 type UserinfoBycode struct {
 	ErrCode  int    `json:"errcode"`
@@ -71,17 +76,11 @@ func (c *Client) GetUserInfoByCode(code, appId, appSecret string) (u *UserinfoBy
 		"signature": sign,
 	}
 	url := fmt.Sprintf("%s?%s", GetUserInfoBycode, lib.UrlEncode(param))
-	if c.Debug {
-		log.Println("url:", url)
-	}
 	req := lib.Post(url)
 	req.Body(jsonData)
 	b, err := req.AsBytes()
 	if err != nil {
 		return u, err
-	}
-	if c.Debug {
-		log.Println("resp:", string(b))
 	}
 
 	err = json.Unmarshal(b, u)
