@@ -10,8 +10,8 @@
 
 - 身份验证(auth)
 - 通讯录管理
- - 用户管理(user)
- - 部门管理(department) 
+  - 用户管理(user)
+  - 部门管理(department) 
 
 	
 ## Install
